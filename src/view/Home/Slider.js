@@ -1,6 +1,11 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
-const _ = require("lodash");
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Mousewheel } from "swiper/modules";
+
+// Import Swiper styles
+import "swiper/css";
+import "swiper/css/navigation";
 
 const Slider = ({ data, select, setSelect }) => {
   useEffect(() => {
@@ -10,59 +15,64 @@ const Slider = ({ data, select, setSelect }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const checker = useCallback(
-    _.debounce((item) => setSelect(item), 100),
-    []
-  );
-
-  const handleScroll = (e) => {
-    const widthItem = e.target.scrollWidth / data.length;
-    const item = Math.ceil(e.target.scrollLeft / widthItem);
-    if (select !== data[item].albumId) {
-      checker(data[item].albumId);
-    }
-  };
-
   function capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
   const renderMain = (item) => {
     return (
-      <ItemC
-        key={item.id}
-        style={{ filter: "drop-shadow(0px 5px 10px #f89f1e55)" }}
-      >
-        <ImageC>
-          <Image src={item.url} alt="item image" />
-        </ImageC>
-        <Title>{capitalize(item.title)}</Title>
-      </ItemC>
+      <SwiperSlide style={{ width: "180px" }} key={item.id}>
+        <ItemC
+          style={{
+            filter: "drop-shadow(0px 5px 10px #f89f1e55)",
+            minHeight: "140px",
+          }}
+        >
+          <ImageC>
+            <Image src={item.url} alt="item image" />
+          </ImageC>
+          <Title>{capitalize(item.title)}</Title>
+        </ItemC>
+      </SwiperSlide>
     );
   };
 
   const renderItem = (item) => {
     return (
-      <ItemC key={item.id}>
-        <ImageC>
-          <Image src={item.url} alt="item image" />
-        </ImageC>
-      </ItemC>
+      <SwiperSlide style={{ width: "180px" }} key={item.id}>
+        <ItemC>
+          <ImageC>
+            <Image src={item.url} alt="item image" />
+          </ImageC>
+        </ItemC>
+      </SwiperSlide>
     );
   };
 
   return (
     <>
-      <Container onScroll={handleScroll}>
-        {data.map((item, i) => {
-          if (item.albumId === select) {
-            return renderMain(item);
-          } else return renderItem(item);
-        })}
+      <Container>
+        <Swiper
+          slidesPerView={"auto"}
+          spaceBetween={20}
+          className="mySwiper"
+          loop={true}
+          onSlideChange={(swiperCore) => {
+            const { realIndex } = swiperCore;
+            setSelect(data[realIndex].albumId);
+          }}
+          mousewheel={true}
+          modules={[Mousewheel]}
+        >
+          {data.map((item, i) => {
+            if (item.albumId === select) {
+              return renderMain(item);
+            } else return renderItem(item);
+          })}
+        </Swiper>
       </Container>
       <Counter>
-        {select + 1} of {data.length}
+        {data.findIndex((item) => item.albumId === select) + 1} of {data.length}
       </Counter>
     </>
   );
@@ -89,11 +99,15 @@ const Container = styled.div`
   &::-webkit-scrollbar {
     display: none;
   }
+
+  .swiper-wrapper {
+    align-items: center;
+  }
 `;
 
 const ItemC = styled.div`
-  max-height: 100%;
-  min-width: 180px;
+  max-height: 140px;
+  width: 180px;
   border-radius: 20px;
   background-color: #f89f1e;
   overflow: hidden;

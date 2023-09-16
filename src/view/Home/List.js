@@ -21,6 +21,7 @@ const List = ({ data }) => {
           return 4;
         }}
       />
+      <Fade />
     </Container>
   );
 };
@@ -29,4 +30,15 @@ export default List;
 
 const Container = styled.div`
   padding: 12px;
+`;
+
+const Fade = styled.div`
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  // border: 2px solid red;
+  display: flex;
+  width: 100%;
+  height: 80px;
+  background-image: linear-gradient(#0000, #fffa);
 `;
