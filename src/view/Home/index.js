@@ -54,7 +54,7 @@ const Home = () => {
         <Header user={user} />
         <Slider data={slider} />
       </StickyC>
-      <List data={data.slice(0, 50)} />
+      <List data={data} />
       <AddButton>
         <Plus size={20} color="#fff" />
       </AddButton>

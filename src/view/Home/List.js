@@ -10,6 +10,7 @@ const List = ({ data }) => {
       <PhotoAlbum
         layout="columns"
         photos={data.map((item) => ({
+          key: item.id,
           src: item.url,
           width: breakpoints[Math.floor(Math.random() * breakpoints.length)],
           height: breakpoints[Math.floor(Math.random() * breakpoints.length)],
