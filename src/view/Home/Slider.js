@@ -1,14 +1,13 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useEffect, useCallback } from "react";
 import styled from "styled-components";
 const _ = require("lodash");
 
-const Slider = ({ data }) => {
-  const [select, setSelect] = useState(null);
-
+const Slider = ({ data, select, setSelect }) => {
   useEffect(() => {
     if (data.length) {
-      setSelect(0);
+      setSelect(data[0].albumId);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -20,8 +19,8 @@ const Slider = ({ data }) => {
   const handleScroll = (e) => {
     const widthItem = e.target.scrollWidth / data.length;
     const item = Math.ceil(e.target.scrollLeft / widthItem);
-    if (select !== item) {
-      checker(item);
+    if (select !== data[item].albumId) {
+      checker(data[item].albumId);
     }
   };
 
@@ -43,7 +42,7 @@ const Slider = ({ data }) => {
     );
   };
 
-  const renderItem = (item, i) => {
+  const renderItem = (item) => {
     return (
       <ItemC key={item.id}>
         <ImageC>
@@ -57,9 +56,9 @@ const Slider = ({ data }) => {
     <>
       <Container onScroll={handleScroll}>
         {data.map((item, i) => {
-          if (i === select) {
+          if (item.albumId === select) {
             return renderMain(item);
-          } else return renderItem(item, i);
+          } else return renderItem(item);
         })}
       </Container>
       <Counter>

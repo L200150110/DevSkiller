@@ -4,10 +4,13 @@ import Slider from "./Slider";
 import List from "./List";
 import styled from "styled-components";
 import { Plus } from "react-feather";
+const _ = require("lodash");
 
 const Home = () => {
   const [data, setData] = useState([]);
   const [slider, setSlider] = useState([]);
+  const [select, setSelect] = useState(null);
+
   let scroll = 0;
 
   const [user] = useState({
@@ -17,18 +20,12 @@ const Home = () => {
     email: "melanietan99@gmail.com",
   });
 
-  function getMultipleRandom(arr, num) {
-    const shuffled = [...arr].sort(() => 0.5 - Math.random());
-
-    return shuffled.slice(0, num);
-  }
-
   useEffect(() => {
     fetch("https://jsonplaceholder.typicode.com/photos")
       .then((res) => res.json())
       .then((d) => {
         setData(d);
-        setSlider(getMultipleRandom(d, 10));
+        setSlider(_.uniqBy(d, "albumId").slice(0, 10));
       });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -52,9 +49,11 @@ const Home = () => {
     <Container onScroll={handleScroll}>
       <StickyC id="navbar">
         <Header user={user} />
-        <Slider data={slider} />
+        <Slider data={slider} select={select} setSelect={setSelect} />
       </StickyC>
-      <List data={data} />
+      <List
+        data={select ? data.filter((item) => item.albumId === select) : []}
+      />
       <AddButton>
         <Plus size={20} color="#fff" />
       </AddButton>
